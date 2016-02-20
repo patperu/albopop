@@ -1,0 +1,132 @@
+---
+output: rmarkdown::github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "##",
+  fig.path = "README-"
+)
+
+options(stringsAsFactors = FALSE)
+
+```
+
+albopop - Generate RSS feeds 
+
+The following functions are implemented:
+
+- `ap_parse_page`: parse a page
+- `ap_build_rss`: build an rss feed
+- `ap_build_msg`: build a message to send with Telegram and Twitter
+- `ap_send_telegram`: send a message with Telegram 
+
+### News
+
+- Version 0.1.0 released
+
+### Installation
+
+```{r eval=FALSE}
+devtools::install_github("patperu/albopop")
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, error=FALSE}
+options(width=160)
+```
+
+### Usage
+
+```{r}
+library("albopop")
+library("rvest")
+
+# current version
+packageVersion("albopop")
+```
+The function `ap_parse_page` parse the content for different sites. The parameter `site` specify the type of input. Currently four providers are supported:
+
+   - `JCityGov` [Comune di Medesano](http://195.62.183.230/web/trasparenza/papca-ap/-/papca/igrid/166/177)
+   - `mapweb` [Comune di Lovere](http://www.mapweb.it/lovere/albo/albo_pretorio.php)
+   - `saga` [Comune di Bellusco](http://pubblicazioni1.saga.it/publishing/AP/index.do?org=bellusco)
+   - `studiok` [Comune di Lu](http://albo.studiok.it/lu/albo/)
+
+To parse the announcements for the [Comune di Lu](http://albo.studiok.it/lu/albo/)
+
+```{r eval = TRUE}
+res <- ap_parse_page(url = "http://albo.studiok.it/lu/albo", site = "studiok")
+str(res)
+```
+
+The function `ap_build_rss` generates an RSS feed and writes a simple XML file in the local default directory `feed`. The input must contain at least three columns named `Oggetto`, `Inizio` and `link`. To write the file "Lu.xml":
+
+```{r eval=TRUE, include = TRUE}
+ap_build_rss(res, 
+             rss_title = "Comune di Lu", 
+             rss_link  = "http://albo.studiok.it/lu/albo", 
+             rss_file  = "Lu.xml")
+```
+
+### Send notifications with Telegram and Twitter
+
+Before sending notifications it is necessary to set the appropriate Tokens for bit.ly, Telegram and Twitter.
+
+```{r eval = FALSE, include = TRUE}
+library(urlshorteneR)
+
+bitly_token <- bitly_auth(key    = Sys.getenv("bitly_key"),
+                          secret = Sys.getenv("bitly_secret"))
+
+res <- data.frame(Comune = "Alseno.xml",
+                  title  = "[53 / 2016] AVVISO DI AVVENUTO RILASCIO DI...",
+                  pubDate = "2016-02-20",
+                  link =  "http://albo.studiok.it/alseno/albo/dettaglio.php?id=MES00000000532016",
+                  stringsAsFactors = FALSE)
+
+res_msg <- ap_build_msg(res)
+str(res_msg)
+# 'data.frame':	1 obs. of  7 variables:
+# $ Comune      : chr "Alseno.xml"
+# $ title       : chr "[53 / 2016] AVVISO DI AVVENUTO RILASCIO DI..."
+# $ pubDate     : chr "2016-02-20"
+# $ link        : chr "http://albo.studiok.it/alseno/albo/dettaglio.php?id=MES00000000532016"
+# $ blyurl      : chr "http://bit.ly/214xeQJ"
+# $ msg_Telegram: chr "[53 / 2016] AVVISO DI AVVENUTO RILASCIO DI..., http://bit.ly/214xeQJ"
+# $ msg_Twitter : chr "[53 / 2016] AVVISO DI AVVENUTO RILASCIO DI..., http://bit.ly/214xeQJ"
+```
+
+The function `ap_build_msg` adds three columns to the input:
+
+ - `blyurl`: The shortened URL
+ - `msg_Telegram`: The Telegram message, contains the `title`, the `blyurl` and the `date`
+ - `msg_Twitter`: The Twitter message, contains the `title` (truncated to 100 characters), the `blyurl` and the `date`
+
+```{r, eval = FALSE, include = TRUE}
+ap_send_telegram(res_msg$msg_Telegram, "LU_TOKEN", "LU_CHAT_ID")
+```
+
+To send a notification with Twitter 
+
+```{r eval = FALSE, include = TRUE}
+library('twitteR')
+
+setup_twitter_oauth(Sys.getenv("twitter_api_key"),
+                    Sys.getenv("twitter_api_secret"),
+                    Sys.getenv("twitter_access_token"),
+                    Sys.getenv("twitter_access_token_secret"))
+
+tweet(res_msg$msg_Twitter)
+```
+
+### Meta
+
+* Please [report any issues or bugs](https://github.com/patperu/albopoo/issues).
+* License: MIT
+
+### Code of Conduct
+
+Please note that this project is released with a [Contributor Code of Conduct](CONDUCT.md). 
+By participating in this project you agree to abide by its terms.

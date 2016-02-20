@@ -1,0 +1,26 @@
+Package: albopop
+Title: Read some 'Albo Pretorio' pages and build a RSS feeds
+Description: Provides functions to read some 'Albo Pretorio' pages and export a
+    RSS feed
+Version: 0.1.0
+Authors@R: c(
+    person("Patrick", "Hausmann", role = c("aut", "cre"), email = "patrick.hausmann@covimo.de")
+    )
+License: MIT + file LICENSE
+URL: https://github.com/patperu/albopop
+BugReports: http://www.github.com/patperu/albopop/issues
+VignetteBuilder: knitr
+Imports:
+    httr,
+    lubridate,
+    magrittr,
+    purrr,
+    rvest,
+    stringr,
+    urlshorteneR,
+    XML,
+    xml2
+RoxygenNote: 5.0.1
+Suggests:
+    testthat,
+    knitr
