@@ -26,6 +26,7 @@ The following functions are implemented:
 
 ### News
 
+- Version 0.1.1 : added `noindex` meta tag ([#90 in aborruso/albo-pop ](https://github.com/aborruso/albo-pop/issues/90)) 
 - Version 0.1.0 released
 
 ### Installation

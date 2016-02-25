@@ -2,7 +2,7 @@ Package: albopop
 Title: Read some 'Albo Pretorio' pages and build a RSS feeds
 Description: Provides functions to read some 'Albo Pretorio' pages and export a
     RSS feed
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: c(
     person("Patrick", "Hausmann", role = c("aut", "cre"), email = "patrick.hausmann@covimo.de")
     )

@@ -12,7 +12,7 @@
 #' @importFrom purrr flatten_chr map_chr
 #' @importFrom stringr str_replace
 #' @importFrom XML xmlTree addNode saveXML xpathSApply
-#'                 xmlRoot xmlParse xmlValue xmlTreeParse
+#'                 xmlRoot xmlParse xmlValue xmlTreeParse newXMLNode
 #' @importFrom xml2 read_html
 NULL
 

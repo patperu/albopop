@@ -22,11 +22,14 @@ ap_build_rss <- function(x, rss_title, rss_link, rss_file, store = disk()) {
   x$Fino      <- Set_Date(x$Fino)
   x$timestamp <- x$Inizio
 
-  feed <- xmlTree("rss")
+  feed <- xmlTree("rss", attrs=list(version = "2.0"))
   feed$addNode("channel", close=FALSE)
   feed$addNode("title", rss_title)
   feed$addNode("description", paste0(rss_title, " Albo POP RSS"))
   feed$addNode("link", rss_link)
+  feed$addNode(newXMLNode("xhtml:meta",
+                          namespaceDefinitions = list(xhtml= "http://www.w3.org/1999/xhtml"),
+                          attrs = list(name = "robots", content = "noindex")))
   feed$addNode("language", "it")
 
   for (i in 1:nrow(x)) {
@@ -42,8 +45,7 @@ ap_build_rss <- function(x, rss_title, rss_link, rss_file, store = disk()) {
 
   feed$closeTag()
 
-  rss <- str_replace(saveXML(feed, prefix = '<?xml version="1.0" encoding="UTF-8"?>\n',
-                             encoding = "UTF-8"), "<rss>", '<rss version="2.0">')
+  rss <- saveXML(feed, prefix = '<?xml version="1.0" encoding="UTF-8"?>\n')
 
   #writeLines(rss, con = file.path("feed", rss_file))
 
